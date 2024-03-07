@@ -57,14 +57,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <AndroidResource Remove="Views\**" />
+	  <Compile Remove="Views\**" />
+	  <EmbeddedResource Remove="Views\**" />
+	  <MauiCss Remove="Views\**" />
+	  <MauiXaml Remove="Views\**" />
+	  <None Remove="Views\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Views\" />
 	</ItemGroup>
 
 </Project>
