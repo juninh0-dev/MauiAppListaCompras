@@ -20,7 +20,7 @@ namespace MauiAppListaCompras.Helpers
 
         public Task<List<Produto>> Update(Produto p) 
         {
-            string sql = "Update Produto SET Descricao=?, Preco=?, Quantidade, WHERE id=?";
+            string sql = "Update Produto SET Descricao=?, Preco=?, Quantidade=? WHERE id=?";
 
             return _conn.QueryAsync<Produto>(sql, p.Descricao, p.Preco, p.Quantidade, p.Id);
         }

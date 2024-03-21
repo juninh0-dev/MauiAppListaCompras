@@ -1,13 +1,14 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
 using MauiAppListaCompras.Models;
 
 namespace MauiAppListaCompras
 {
     public partial class MainPage : ContentPage
     {
-        ObservableCollection<Produto> lista_produtos = 
+        ObservableCollection<Produto> lista_produtos =
             new ObservableCollection<Produto>();
-        
+
         public MainPage()
         {
             InitializeComponent();
@@ -21,37 +22,35 @@ namespace MauiAppListaCompras
             DisplayAlert("Somat´roia", msg, "Fechar");
         }
 
-        protected override void OnAppearing()
+        protected async override void OnAppearing()
         {
-            if (lista_produtos.Count == 0) {
-                Task.Run(async () =>
-                {
-                    List<Produto> tmp = await App.Db.GetAll();
-                    foreach (Produto p in tmp)
-                    {
-                        lista_produtos.Add(p);
-                    }
-                }); // Feach Task
-            } // Fecha if
-        } // Fecha classe
-
-        private void ToolbarItem_Clicked_Add(object sender, EventArgs e)
-        {
-
-        }
-
-        private void txt_search_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string q = e.NewTextValue;
-            lista_produtos.Clear();
-            Task.Run(async() =>
+            if (lista_produtos.Count == 0)
             {
-                List<Produto> tmp = await App.Db.Search(q);
-                foreach(Produto p in tmp)
+
+                List<Produto> tmp = await App.Db.GetAll();
+                foreach (Produto p in tmp)
                 {
                     lista_produtos.Add(p);
                 }
-            });
+            } // Fecha if
+        } // Fecha classe
+
+        private async void ToolbarItem_Clicked_Add(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new Views.NovoProduto());
+        }
+
+        private async void txt_search_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string q = e.NewTextValue;
+            lista_produtos.Clear();
+
+                List<Produto> tmp = await App.Db.Search(q);
+                foreach (Produto p in tmp)
+                {
+                    lista_produtos.Add(p);
+                }
+
         }
 
         private void ref_carregando_Refreshing(object sender, EventArgs e)
@@ -60,7 +59,7 @@ namespace MauiAppListaCompras
             Task.Run(async () =>
             {
                 List<Produto> tmp = await App.Db.GetAll();
-                foreach(Produto p in tmp)
+                foreach (Produto p in tmp)
                 {
                     lista_produtos.Add(p);
                 }
@@ -70,12 +69,28 @@ namespace MauiAppListaCompras
 
         private void lst_produtos_ItemSelected(object sender, SelectedItemChangedEventArgs e)
         {
+            Produto? p = e.SelectedItem as Produto;
 
+            Navigation.PushAsync(new Views.EditarProduto
+            {
+                BindingContext = p
+            });
         }
 
-        private void MenuItem_Clicked_Remover(object sender, EventArgs e)
+        private async void MenuItem_Clicked_Remover(object sender, EventArgs e)
         {
+            try
+            {
+                MenuItem selecionado = (MenuItem)sender;
 
+                Produto p = selecionado.BindingContext as Produto;
+
+                bool confirm = await DisplayAlert(
+                    "Tem certeza?", "Remover Produto?", "Sim", "Cancelar");
+            } catch (Exception ex)
+            {
+                await DisplayAlert("Ops", ex.Message, "OK");
+            }
         }
     } // Fecha classe
 
